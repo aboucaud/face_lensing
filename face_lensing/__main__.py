@@ -1,6 +1,12 @@
+from pathlib import Path
+
 import cv2
 import numpy as np
 from scipy.ndimage import map_coordinates
+
+_BASEDIR = Path(__file__).parent.resolve()
+LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
+
 
 class Camera:
     def __init__(self, cam_id=0, output_shape=None):
@@ -86,7 +92,7 @@ class Morphing:
             list(map(lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X)))
 
 
-def main(lens_file="dpl_xy_z1_elliptical.npz", cam_id=0, zoom=0.07):
+def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
     cam = Camera(cam_id)
     morph = Morphing(cam.shape, lens_file, zoom)
     img_display = cam.read_capture_device()
