@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from scipy.ndimage import map_coordinates
 
 class Camera:
     def __init__(self, cam_id=0, output_shape=None):
@@ -21,12 +22,13 @@ class Camera:
         img = self.read_capture_device()
         self.shape = img.shape[:2]
     
-    def show(self, image):
+    def show(self, image=None):
+        image = image if image is not None else self.read_capture_device()
         image = cv2.resize(image, self.output_shape)
-        cv2.imshow('video test', image)
+        cv2.imshow('Face Lensing', image)
 
     def switch_capture_device(self):
-        self.cam_id = 1 - self.cam_id
+        self.cam_id = 1 - self.cam_id   
         self.release()
         print(f'Switching to camera {self.cam_id}')
         self.set_capture_device()
@@ -37,7 +39,7 @@ class Camera:
 
 
 class Morphing:
-    def __init__(self, target_shape, morph_file, zoom=0.07, shift=(0, 0)):
+    def __init__(self, target_shape, morph_file, zoom, shift=(0, 0)):
         self.zoom = zoom
         self.shift = np.asarray(shift, dtype=int)
         self.read_morph_file(morph_file)
@@ -55,54 +57,39 @@ class Morphing:
 
     def init_morphing(self):
         height, width = self.target_shape
-        mapcentery = self.shape[0] / 2
-        mapcenterx = self.shape[1] / 2  # because both maps have the same size
-        centery = height / 2 + self.shift[0]
-        centerx = width / 2 + self.shift[1]
+        lens_center = self.shape / 2
+        img_center = self.target_shape / 2 + self.shift
 
-        dplx = np.empty([height, width], dtype=int)
-        dply = np.empty([height, width], dtype=int)
+        self.Y, self.X = np.indices(self.target_shape)
 
-        Y, X = np.meshgrid(np.arange(height), np.arange(width))
+        # Create coordinates mapping between the image and the lens
+        centred_coords = (
+            np.indices(self.target_shape).reshape(2, -1) 
+            - img_center[:, None] 
+            + lens_center[:, None]).astype(int)
 
-        Y = np.asarray(list(map(lambda p: mapcentery+(p-centery), Y)), dtype=int)
-        Y.clip(0, self.shape[0]-1)
-        X = np.asarray(list(map(lambda q: mapcenterx+(q-centerx), X)), dtype=int)
-        X.clip(0, self.shape[1]-1)
+        centred_coords[0] = centred_coords[0].clip(0, self.shape[0]-1)
+        centred_coords[1] = centred_coords[1].clip(0, self.shape[1]-1)
 
-        dplx[:, :] = np.asarray(
-            list(map(lambda p, q: q-self.hx[Y[p, q], X[p, q]]/self.zoom, Y, X)))
-        dplx.clip(0, width - 1)
-        dply[:, :] = np.asarray(
-            list(map(lambda p, q: p-self.hy[Y[p, q], X[p, q]]/self.zoom, Y, X)))
-        dply.clip(0, height - 1)
+        lens_coords = np.reshape(centred_coords, (2, *self.target_shape))
 
+        dpl1y = map_coordinates(self.hy / self.zoom, lens_coords, order=1)
+        dpl1x = map_coordinates(self.hx / self.zoom, lens_coords, order=1)
 
-        dplx = width-dplx  # mirror effect
-        
-        self.dplx = dplx
-        self.dply = dply
+        self.dply = np.array(self.Y - dpl1y).astype(int)
+        self.dplx = np.array(self.X - dpl1x).astype(int)
+        # Mirror lens effect on the horizontal axis
+        self.dplx = width - self.dplx
 
     def apply(self, image):
-        img = np.empty_like(image)
-        img[:, :] = np.asarray(
+        return np.asarray(
             list(map(lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X)))
-        return img
 
 
-def clip(array, val_min, val_max):
-    array[np.where(array < val_min)] = val_min
-    array[np.where(array > val_max)] = val_max
-    return array
-
-if __name__ == "__main__":
-    MORPH_FILE = "dpl_xy_z1_elliptical.npz"
-    DEFAULT_CAM_ID = 1
-    ZOOM = 0.07
-
-    cam = Camera(DEFAULT_CAM_ID)
-    morph = Morphing(cam.shape, MORPH_FILE, zoom=ZOOM)
-    img_display = np.empty(cam.shape)
+def main(lens_file="dpl_xy_z1_elliptical.npz", cam_id=0, zoom=0.07):
+    cam = Camera(cam_id)
+    morph = Morphing(cam.shape, lens_file, zoom)
+    img_display = cam.read_capture_device()
 
     while True:
         img_display[...] = morph.apply(
@@ -113,13 +100,16 @@ if __name__ == "__main__":
         if cv2.waitKey(1) & 0xFF == ord('c'):
             cam.switch_capture_device()
             morph.set_target_shape(cam.shape)
+            img_display = cam.read_capture_device()
 
-        if cv2.waitKey(1) & 0xFF == ord('+'):
-            morph.zoom += 0.01
+        if cv2.waitKey(1) & 0xFF == ord('j'):
+            print("augmente effet")
+            morph.zoom -= 0.005
             morph.init_morphing()
 
-        if cv2.waitKey(1) & 0xFF == ord('-'):
-            morph.zoom -= 0.01
+        if cv2.waitKey(1) & 0xFF == ord('k'):
+            print("diminue effet")
+            morph.zoom += 0.005
             morph.init_morphing()
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -128,3 +118,8 @@ if __name__ == "__main__":
     # When everything done, release the capture
     cam.release()
     cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
+    
