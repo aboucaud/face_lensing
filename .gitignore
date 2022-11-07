@@ -1,0 +1,6 @@
+venv
+profile.json
+.eggs
+__pycache__
+*.pyc
+*.ipynb
