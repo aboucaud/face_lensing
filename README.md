@@ -22,10 +22,11 @@ App controls
 
 The app can be controlled through the keyboard using the following controls:
 
-- <kbd>Q</kbd>: quit the program
-- <kbd>C</kbd>: change camera (in case of multiple webcams)
-- <kbd>J</kbd>: increase the lensing effect
-- <kbd>K</kbd>: decrease the lensing effect
+- <kbd>q</kbd>: quit the program
+- <kbd>c</kbd>: change camera (in case of multiple webcams)
+- <kbd>Space</kbd>: save a screenshot locally
+- <kbd>+</kbd>: increase the lensing effect
+- <kbd>-</kbd>: decrease the lensing effect
 
 
 License
