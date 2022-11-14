@@ -45,6 +45,15 @@ class Camera:
     def take_screenshot(self, img):
         img_name = f"face_lensing_screenshot_{self.save_counter}.jpg"
         img_path = str(Path(self.output_dir) / img_name)
+        cv2.putText(
+            img = img,
+            text = "Made with Face Lensing - CNRS",
+            org = (30, self.shape[0] - 30),
+            fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=0.8,
+            color=(240, 240, 240),
+            thickness=2
+        )
         cv2.imwrite(img_path, img)
         self.save_counter += 1
         print(f"Image written as {img_path}")
