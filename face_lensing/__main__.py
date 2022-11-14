@@ -23,20 +23,20 @@ class Camera:
     def read_capture_device(self):
         ack, img = self.camera.read()
         if not ack:
-            raise ValueError('Image could not be read from device')        
+            raise ValueError('Image could not be read from device')
         return img
 
     def read_image_properties(self):
         img = self.read_capture_device()
         self.shape = img.shape[:2]
-    
+
     def show(self, image=None):
         image = image if image is not None else self.read_capture_device()
         image = cv2.resize(image, self.output_shape)
         cv2.imshow('Face Lensing', image)
 
     def switch_capture_device(self):
-        self.cam_id = 1 - self.cam_id   
+        self.cam_id = 1 - self.cam_id
         self.release()
         print(f'Switching to camera {self.cam_id}')
         self.set_capture_device()
@@ -60,7 +60,6 @@ class Camera:
 
     def release(self):
         self.camera.release()
-
 
 class Morphing:
     def __init__(self, target_shape, morph_file, zoom, shift=(0, 0)):
@@ -88,8 +87,8 @@ class Morphing:
 
         # Create coordinates mapping between the image and the lens
         centred_coords = (
-            np.indices(self.target_shape).reshape(2, -1) 
-            - img_center[:, None] 
+            np.indices(self.target_shape).reshape(2, -1)
+            - img_center[:, None]
             + lens_center[:, None]).astype(int)
 
         centred_coords[0] = centred_coords[0].clip(0, self.shape[0]-1)
