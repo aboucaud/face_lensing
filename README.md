@@ -1,7 +1,7 @@
 Face Lensing App
 ================
 
-Look at yourself through a gravitational lens. 
+Look at yourself through a gravitational lens.
 
 Installation
 ------------
@@ -22,11 +22,13 @@ App controls
 
 The app can be controlled through the keyboard using the following controls:
 
-- <kbd>q</kbd>: quit the program
-- <kbd>c</kbd>: change camera (in case of multiple webcams)
-- <kbd>Space</kbd>: save a screenshot locally
-- <kbd>+</kbd>: increase the lensing effect
-- <kbd>-</kbd>: decrease the lensing effect
+|       Key        | Action                                      |
+| :--------------: | ------------------------------------------- |
+|   <kbd>q</kbd>   | quit the program                            |
+|   <kbd>c</kbd>   | change camera (in case of multiple webcams) |
+| <kbd>Space</kbd> | save a screenshot locally                   |
+|   <kbd>+</kbd>   | increase the lensing effect                 |
+|   <kbd>-</kbd>   | decrease the lensing effect                 |
 
 
 License
