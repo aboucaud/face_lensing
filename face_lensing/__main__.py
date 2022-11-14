@@ -23,7 +23,7 @@ class Camera:
     def read_capture_device(self):
         ack, img = self.camera.read()
         if not ack:
-            raise ValueError('Image could not be read from device')
+            raise ValueError("Image could not be read from device")
         return img
 
     def read_image_properties(self):
@@ -33,12 +33,12 @@ class Camera:
     def show(self, image=None):
         image = image if image is not None else self.read_capture_device()
         image = cv2.resize(image, self.output_shape)
-        cv2.imshow('Face Lensing', image)
+        cv2.imshow("Face Lensing", image)
 
     def switch_capture_device(self):
         self.cam_id = 1 - self.cam_id
         self.release()
-        print(f'Switching to camera {self.cam_id}')
+        print(f"Switching to camera {self.cam_id}")
         self.set_capture_device()
         self.read_image_properties()
 
@@ -46,13 +46,13 @@ class Camera:
         img_name = f"face_lensing_screenshot_{self.save_counter}.jpg"
         img_path = str(Path(self.output_dir) / img_name)
         cv2.putText(
-            img = img,
-            text = "Made with Face Lensing - CNRS",
-            org = (30, self.shape[0] - 30),
-            fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+            img=img,
+            text="Made with Face Lensing - CNRS",
+            org=(30, self.shape[0] - 30),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=0.8,
             color=(240, 240, 240),
-            thickness=2
+            thickness=2,
         )
         cv2.imwrite(img_path, img)
         self.save_counter += 1
@@ -60,6 +60,7 @@ class Camera:
 
     def release(self):
         self.camera.release()
+
 
 class Morphing:
     def __init__(self, target_shape, morph_file, zoom, shift=(0, 0)):
@@ -89,10 +90,11 @@ class Morphing:
         centred_coords = (
             np.indices(self.target_shape).reshape(2, -1)
             - img_center[:, None]
-            + lens_center[:, None]).astype(int)
+            + lens_center[:, None]
+        ).astype(int)
 
-        centred_coords[0] = centred_coords[0].clip(0, self.shape[0]-1)
-        centred_coords[1] = centred_coords[1].clip(0, self.shape[1]-1)
+        centred_coords[0] = centred_coords[0].clip(0, self.shape[0] - 1)
+        centred_coords[1] = centred_coords[1].clip(0, self.shape[1] - 1)
 
         lens_coords = np.reshape(centred_coords, (2, *self.target_shape))
 
@@ -106,7 +108,12 @@ class Morphing:
 
     def apply(self, image):
         return np.asarray(
-            list(map(lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X)))
+            list(
+                map(
+                    lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X
+                )
+            )
+        )
 
     def increase_effect(self):
         if self.zoom > 0.005:
@@ -124,31 +131,29 @@ def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
     img_display = cam.read_capture_device()
 
     while True:
-        img_display[...] = morph.apply(
-            cam.read_capture_device()
-        )
+        img_display[...] = morph.apply(cam.read_capture_device())
         cam.show(img_display)
 
         if keypress := cv2.waitKey(25):
-            if keypress == ord('c'):
+            if keypress == ord("c"):
                 cam.switch_capture_device()
                 morph.set_target_shape(cam.shape)
                 img_display = cam.read_capture_device()
 
-            if keypress == ord('+'):
+            if keypress == ord("+"):
                 print("Increasing lens effect")
                 morph.increase_effect()
 
-            if keypress == ord('-'):
+            if keypress == ord("-"):
                 print("Decreasing lens effect")
                 morph.decrease_effect()
 
-            if keypress == ord(' '):
+            if keypress == ord(" "):
                 print("Taking a screenshot")
                 cam.take_screenshot(img_display)
 
-            if keypress == ord('q'):
-                print('Quitting')
+            if keypress == ord("q"):
+                print("Quitting")
                 break
 
     cam.release()
