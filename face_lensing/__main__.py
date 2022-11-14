@@ -91,6 +91,15 @@ class Morphing:
         return np.asarray(
             list(map(lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X)))
 
+    def increase_effect(self):
+        if self.zoom > 0.005:
+            self.zoom -= 0.005
+        self.init_morphing()
+
+    def decrease_effect(self):
+        self.zoom += 0.005
+        self.init_morphing()
+
 
 def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
     cam = Camera(cam_id)
@@ -103,29 +112,32 @@ def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
         )
         cam.show(img_display)
 
-        if cv2.waitKey(1) & 0xFF == ord('c'):
-            cam.switch_capture_device()
-            morph.set_target_shape(cam.shape)
-            img_display = cam.read_capture_device()
+        if keypress := cv2.waitKey(25):
+            if keypress == ord('c'):
+                cam.switch_capture_device()
+                morph.set_target_shape(cam.shape)
+                img_display = cam.read_capture_device()
 
-        if cv2.waitKey(1) & 0xFF == ord('j'):
-            print("augmente effet")
-            morph.zoom -= 0.005
-            morph.init_morphing()
+            if keypress == ord('+'):
+                print("Increasing lens effect")
+                morph.increase_effect()
+
+            if keypress == ord('-'):
+                print("Decreasing lens effect")
+                morph.decrease_effect()
 
         if cv2.waitKey(1) & 0xFF == ord('k'):
             print("diminue effet")
             morph.zoom += 0.005
             morph.init_morphing()
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            if keypress == ord('q'):
+                print('Quitting')
+                break
 
-    # When everything done, release the capture
     cam.release()
     cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
     main()
-    
