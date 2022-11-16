@@ -1,5 +1,7 @@
-Face Lensing App
-================
+Face Lensing
+============
+
+[![License][license-badge]](LICENSE) ![Python supported versions][pyversion-badge] [![PyPI][pypi-badge]][pypi]
 
 Look at yourself through a gravitational lens.
 
@@ -35,4 +37,9 @@ The app can be controlled through the keyboard using the following controls:
 License
 -------
 
-This program is licensed under the MIT license.
+This program is licensed under the [MIT license](LICENSE).
+
+[license-badge]: https://img.shields.io/github/license/aboucaud/facee_lensing?color=blue
+[pyversion-badge]: https://img.shields.io/pypi/pyversions/face_lensing?color=yellow&logo=pypi
+[pypi-badge]: https://badge.fury.io/py/face_lensing.svg
+[pypi]: https://pypi.org/project/face_lensing/
