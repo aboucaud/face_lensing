@@ -7,13 +7,26 @@ from scipy.ndimage import map_coordinates
 _BASEDIR = Path(__file__).parent.resolve()
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
 
+COMMANDS = [
+    "H : show/hide the app controls",
+    "Q : shutdown app",
+    "C : switch camera",
+    "+ : increase lens effect",
+    "- : decrease lens effect",
+    "Space : take a screenshot",
+]
+
 
 class Camera:
     def __init__(self, cam_id=0, output_shape=None, output_dir=None):
         self.cam_id = cam_id
         self.output_shape = output_shape or (1280, 800)
         self.output_dir = output_dir or str(Path.cwd().resolve())
-        self.save_counter = 0
+        self._init_app()
+
+    def _init_app(self):
+        self._save_counter = 0
+        self._show_help = False
         self.set_capture_device()
         self.read_image_properties()
 
@@ -30,9 +43,28 @@ class Camera:
         img = self.read_capture_device()
         self.shape = img.shape[:2]
 
+    def toggle_help(self):
+        self._show_help = not self._show_help
+
+    def show_commands(self, image):
+        ypos = 50
+        for i, cmd in enumerate(COMMANDS):
+            cv2.putText(
+                img=image,
+                text=cmd,
+                org=(30, ypos + 30 * i),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.8,
+                color=(240, 240, 240),
+                thickness=2,
+            )
+            ypos += 30
+
     def show(self, image=None):
         image = image if image is not None else self.read_capture_device()
         image = cv2.resize(image, self.output_shape)
+        if self._show_help:
+            self.show_commands(image)
         cv2.imshow("Face Lensing", image)
 
     def switch_capture_device(self):
@@ -43,7 +75,7 @@ class Camera:
         self.read_image_properties()
 
     def take_screenshot(self, img):
-        img_name = f"face_lensing_screenshot_{self.save_counter}.jpg"
+        img_name = f"face_lensing_screenshot_{self._save_counter}.jpg"
         img_path = str(Path(self.output_dir) / img_name)
         cv2.putText(
             img=img,
@@ -55,7 +87,7 @@ class Camera:
             thickness=2,
         )
         cv2.imwrite(img_path, img)
-        self.save_counter += 1
+        self._save_counter += 1
         print(f"Image written as {img_path}")
 
     def release(self):
@@ -151,6 +183,10 @@ def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
             if keypress == ord(" "):
                 print("Taking a screenshot")
                 cam.take_screenshot(img_display)
+
+            if keypress == ord("h"):
+                print("Showing/hiding commands")
+                cam.toggle_help()
 
             if keypress == ord("q"):
                 print("Quitting")

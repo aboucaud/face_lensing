@@ -24,6 +24,7 @@ The app can be controlled through the keyboard using the following controls:
 
 |       Key        | Action                                      |
 | :--------------: | ------------------------------------------- |
+|   <kbd>h</kbd>   | show/hide command helper                    |
 |   <kbd>q</kbd>   | quit the program                            |
 |   <kbd>c</kbd>   | change camera (in case of multiple webcams) |
 | <kbd>Space</kbd> | save a screenshot locally                   |
