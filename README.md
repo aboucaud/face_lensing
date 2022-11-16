@@ -39,7 +39,7 @@ License
 
 This program is licensed under the [MIT license](LICENSE).
 
-[license-badge]: https://img.shields.io/github/license/aboucaud/facee_lensing?color=blue
+[license-badge]: https://img.shields.io/github/license/aboucaud/face_lensing?color=blue
 [pyversion-badge]: https://img.shields.io/pypi/pyversions/face_lensing?color=yellow&logo=pypi
 [pypi-badge]: https://badge.fury.io/py/face_lensing.svg
 [pypi]: https://pypi.org/project/face_lensing/
