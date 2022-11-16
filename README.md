@@ -34,6 +34,11 @@ The app can be controlled through the keyboard using the following controls:
 |   <kbd>-</kbd>   | decrease the lensing effect                 |
 
 
+Acknowledgements
+----------------
+
+The precomputation of the lens deformation was done by Johan Richard (CRAL, CNRS/INSU, Lyon)
+
 License
 -------
 
