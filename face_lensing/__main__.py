@@ -22,6 +22,8 @@ from scipy.ndimage import map_coordinates
 
 _BASEDIR = Path(__file__).parent.resolve()
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
+DEFAULT_CAM = 0
+DEFAULT_ZOOM = 0.07
 
 TITLE = "Face Lensing"
 COMMANDS = [
@@ -35,6 +37,8 @@ COMMANDS = [
 
 
 class Camera:
+    """Class handling i/o operations with the webcam and saving screenshots"""
+
     def __init__(self, cam_id=0, output_shape=None, output_dir=None):
         self.cam_id = cam_id
         self.output_shape = output_shape or (1280, 800)
@@ -87,7 +91,6 @@ class Camera:
     def switch_capture_device(self):
         self.cam_id = 1 - self.cam_id
         self.release()
-        print(f"Switching to camera {self.cam_id}")
         self.set_capture_device()
         self.read_image_properties()
 
@@ -112,6 +115,8 @@ class Camera:
 
 
 class Morphing:
+    """Class handling the morphing effects precomputed in a file"""
+
     def __init__(self, target_shape, morph_file, zoom, shift=(0, 0)):
         self.zoom = zoom
         self.shift = np.asarray(shift, dtype=int)
@@ -129,7 +134,6 @@ class Morphing:
         self.init_morphing()
 
     def init_morphing(self):
-        height, width = self.target_shape
         lens_center = self.shape / 2
         img_center = self.target_shape / 2 + self.shift
 
@@ -153,7 +157,7 @@ class Morphing:
         self.dply = np.array(self.Y - dpl1y).astype(int)
         self.dplx = np.array(self.X - dpl1x).astype(int)
         # Mirror lens effect on the horizontal axis
-        self.dplx = width - self.dplx
+        self.dplx = self.target_shape[1] - self.dplx
 
     def apply(self, image):
         return np.asarray(
@@ -174,7 +178,7 @@ class Morphing:
         self.init_morphing()
 
 
-def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
+def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM):
     print(__doc__)
     cam = Camera(cam_id)
     morph = Morphing(cam.shape, lens_file, zoom)
@@ -186,6 +190,7 @@ def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
 
         if keypress := cv2.waitKey(25):
             if keypress == ord("c"):
+                print(f"Switching to camera {1 - cam.cam_id}")
                 cam.switch_capture_device()
                 morph.set_target_shape(cam.shape)
                 img_display = cam.read_capture_device()
