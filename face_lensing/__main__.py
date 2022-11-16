@@ -1,3 +1,19 @@
+r"""
+ _____                _                   _
+|  ___|_ _  ___ ___  | |    ___ _ __  ___(_)_ __   __ _
+| |_ / _` |/ __/ _ \ | |   / _ \ '_ \/ __| | '_ \ / _` |
+|  _| (_| | (_|  __/ | |__|  __/ | | \__ \ | | | | (_| |
+|_|  \__,_|\___\___| |_____\___|_| |_|___/_|_| |_|\__, |
+                                                  |___/
+
+An app to visualise your face through a gravitational lens.
+
+This app works across platforms (Linux, macOS, Windows) and
+had been created as a way to interrogate and facilitate questions
+in science outreach events.
+
+Developed by Alexandre Boucaud (Laboratoire APC, CNRS/IN2P3, Paris)
+"""
 from pathlib import Path
 
 import cv2
@@ -7,6 +23,7 @@ from scipy.ndimage import map_coordinates
 _BASEDIR = Path(__file__).parent.resolve()
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
 
+TITLE = "Face Lensing"
 COMMANDS = [
     "H : show/hide the app controls",
     "Q : shutdown app",
@@ -65,7 +82,7 @@ class Camera:
         image = cv2.resize(image, self.output_shape)
         if self._show_help:
             self.show_commands(image)
-        cv2.imshow("Face Lensing", image)
+        cv2.imshow(TITLE, image)
 
     def switch_capture_device(self):
         self.cam_id = 1 - self.cam_id
@@ -158,6 +175,7 @@ class Morphing:
 
 
 def main(lens_file=LENS_FILE_PATH, cam_id=0, zoom=0.07):
+    print(__doc__)
     cam = Camera(cam_id)
     morph = Morphing(cam.shape, lens_file, zoom)
     img_display = cam.read_capture_device()
