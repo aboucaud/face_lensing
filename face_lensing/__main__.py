@@ -99,12 +99,12 @@ class Camera:
         img_path = str(Path(self.output_dir) / img_name)
         cv2.putText(
             img=img,
-            text="Made with Face Lensing - CNRS",
-            org=(30, self.shape[0] - 30),
+            text="Made with Face Lensing - https://github.com/aboucaud/face_lensing",
+            org=(20, self.shape[0] - 20),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=0.8,
+            fontScale=0.5,
             color=(240, 240, 240),
-            thickness=2,
+            thickness=1,
         )
         cv2.imwrite(img_path, img)
         self._save_counter += 1
