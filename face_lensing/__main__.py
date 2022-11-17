@@ -22,7 +22,7 @@ from scipy.ndimage import map_coordinates
 
 _BASEDIR = Path(__file__).parent.resolve()
 
-APP_TITLE = "Face Lensing"
+TITLE = "Face Lensing"
 COMMANDS = (
     "H : show/hide the app controls",
     "Q : shutdown app",
@@ -31,6 +31,9 @@ COMMANDS = (
     "- : decrease lens effect",
     "Space : take a screenshot",
 )
+WATERMARK = "Made with Face Lensing - https://github.com/aboucaud/face_lensing"
+SCREENSHOT_TEMPLATE = "face_lensing_screenshot_{}.jpg"
+
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
 DEFAULT_CAM = 0
 DEFAULT_ZOOM = 0.07
@@ -46,7 +49,7 @@ class Camera:
         self._init_app()
 
     def _init_app(self):
-        self._save_counter = 0
+        self._save_count = 0
         self._show_help = False
         self.set_capture_device()
         self.read_image_properties()
@@ -68,25 +71,26 @@ class Camera:
         self._show_help = not self._show_help
 
     def show_commands(self, image):
-        ypos = 50
+        y_position = 50
         for i, cmd in enumerate(COMMANDS):
             cv2.putText(
                 img=image,
                 text=cmd,
-                org=(30, ypos + 30 * i),
+                org=(30, y_position + 30 * i),
                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                 fontScale=0.8,
                 color=(240, 240, 240),
                 thickness=2,
             )
-            ypos += 30
+            y_position += 30
 
     def show(self, image=None):
         image = image if image is not None else self.read_capture_device()
         image = cv2.resize(image, self.output_shape)
         if self._show_help:
             self.show_commands(image)
-        cv2.imshow(APP_TITLE, image)
+            self.add_watermark(image)
+        cv2.imshow(TITLE, image)
 
     def switch_capture_device(self):
         self.cam_id = 1 - self.cam_id
@@ -95,20 +99,23 @@ class Camera:
         self.read_image_properties()
 
     def take_screenshot(self, img):
-        img_name = f"face_lensing_screenshot_{self._save_counter}.jpg"
+        self.add_watermark(img)
+        img_name = SCREENSHOT_TEMPLATE.format(self._save_count)
         img_path = str(Path(self.output_dir) / img_name)
+        cv2.imwrite(img_path, img)
+        print(f"Image written as {img_path}")
+        self._save_count += 1
+
+    def add_watermark(self, image):
         cv2.putText(
-            img=img,
-            text="Made with Face Lensing - https://github.com/aboucaud/face_lensing",
+            img=image,
+            text=WATERMARK,
             org=(20, self.shape[0] - 20),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=0.5,
             color=(240, 240, 240),
             thickness=1,
         )
-        cv2.imwrite(img_path, img)
-        self._save_counter += 1
-        print(f"Image written as {img_path}")
 
     def release(self):
         self.camera.release()
