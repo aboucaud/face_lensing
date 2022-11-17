@@ -132,25 +132,22 @@ class Morphing:
 
     def read_morph_file(self, file_path):
         lens_model = np.load(file_path)
-        self.hx = lens_model["dplx"]
-        self.hy = lens_model["dply"]
-        self.shape = np.asarray(self.hx.shape, dtype=int)
+        self.dplx = lens_model["dplx"]
+        self.dply = lens_model["dply"]
+        self.shape = np.asarray(self.dplx.shape, dtype=int)
 
     def set_target_shape(self, new_shape):
         self.target_shape = np.asarray(new_shape, dtype=int)
+        self.coords = np.indices(new_shape)
         self.init_morphing()
 
     def init_morphing(self):
         lens_center = self.shape / 2
         img_center = self.target_shape / 2 + self.shift
 
-        self.Y, self.X = np.indices(self.target_shape)
-
         # Create coordinates mapping between the image and the lens
         centred_coords = (
-            np.indices(self.target_shape).reshape(2, -1)
-            - img_center[:, None]
-            + lens_center[:, None]
+            self.coords.reshape(2, -1) - img_center[:, None] + lens_center[:, None]
         ).astype(int)
 
         centred_coords[0] = centred_coords[0].clip(0, self.shape[0] - 1)
@@ -158,19 +155,22 @@ class Morphing:
 
         lens_coords = np.reshape(centred_coords, (2, *self.target_shape))
 
-        dpl1y = map_coordinates(self.hy / self.zoom, lens_coords, order=1)
-        dpl1x = map_coordinates(self.hx / self.zoom, lens_coords, order=1)
+        img_dply = map_coordinates(self.dply / self.zoom, lens_coords, order=1)
+        img_dplx = map_coordinates(self.dplx / self.zoom, lens_coords, order=1)
 
-        self.dply = np.array(self.Y - dpl1y).astype(int)
-        self.dplx = np.array(self.X - dpl1x).astype(int)
+        self.displacement_y = np.array(self.coords[0] - img_dply).astype(int)
+        self.displacement_x = np.array(self.coords[1] - img_dplx).astype(int)
         # Mirror lens effect on the horizontal axis
-        self.dplx = self.target_shape[1] - self.dplx
+        self.displacement_x = self.target_shape[1] - self.displacement_x
 
     def apply(self, image):
         return np.asarray(
             list(
                 map(
-                    lambda p, q: image[self.dply[p, q], self.dplx[p, q]], self.Y, self.X
+                    lambda iy, ix: image[
+                        self.displacement_y[iy, ix], self.displacement_x[iy, ix]
+                    ],
+                    *self.coords,
                 )
             )
         )
