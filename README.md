@@ -3,26 +3,37 @@ Face Lensing
 
 [![License][license-badge]](LICENSE) ![Python supported versions][pyversion-badge] [![PyPI][pypi-badge]][pypi]
 
-Look at yourself through a gravitational lens.
+___Look at yourself through a gravitational lens___
+
+<img alt="Face Lensing screenshot example" src="example.jpg" height=350px>
+
+This program was developed for **outreach purposes**.
+
+It deforms the input feed of a webcam as if the light had gone through a gravitational lens.  
+While the shape of the lens was precomputed and cannot be changed, one can play with the intensity of the deformation (using <kbd>+</kbd> / <kbd>-</kbd> keys) to make interesting effects appear.
+
+The effect is best seen from a certain distance, when the head is well centered with respect to the webcam, but appears on the screen in multiple places around the image center.
+
+Feel free to install and play with it, it has been tested on Windows, Linux and macOS.
 
 Installation
 ------------
 
 1. Install the Python program with `pip`
     ```sh
-    pip install face_lensing
+    pip install face-lensing
     ```
 2. Launch the app from a terminal
     ```sh
     face-lensing-app
     ```
-3. A window should appear with the distorted webcam image
+3. A program should appear with the distorted webcam image
 
 
 App controls
 ------------
 
-The app can be controlled through the keyboard using the following controls:
+The program can be controlled with a keyboard using the following keys
 
 |       Key        | Action                                      |
 | :--------------: | ------------------------------------------- |
@@ -37,7 +48,7 @@ The app can be controlled through the keyboard using the following controls:
 Acknowledgements
 ----------------
 
-The precomputation of the lens deformation was done by Johan Richard (CRAL, CNRS/INSU, Lyon)
+The original idea and precomputation of the lens deformation is attributed to Johan Richard (CRAL, CNRS/INSU, Lyon)
 
 License
 -------
