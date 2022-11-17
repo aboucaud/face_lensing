@@ -21,19 +21,19 @@ import numpy as np
 from scipy.ndimage import map_coordinates
 
 _BASEDIR = Path(__file__).parent.resolve()
-LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
-DEFAULT_CAM = 0
-DEFAULT_ZOOM = 0.07
 
-TITLE = "Face Lensing"
-COMMANDS = [
+APP_TITLE = "Face Lensing"
+COMMANDS = (
     "H : show/hide the app controls",
     "Q : shutdown app",
     "C : switch camera",
     "+ : increase lens effect",
     "- : decrease lens effect",
     "Space : take a screenshot",
-]
+)
+LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
+DEFAULT_CAM = 0
+DEFAULT_ZOOM = 0.07
 
 
 class Camera:
@@ -86,7 +86,7 @@ class Camera:
         image = cv2.resize(image, self.output_shape)
         if self._show_help:
             self.show_commands(image)
-        cv2.imshow(TITLE, image)
+        cv2.imshow(APP_TITLE, image)
 
     def switch_capture_device(self):
         self.cam_id = 1 - self.cam_id
