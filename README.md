@@ -5,7 +5,7 @@ Face Lensing
 
 ___Look at yourself through a gravitational lens___
 
-<img alt="Face Lensing screenshot example" src="example.jpg" height=350px>
+<img alt="Face Lensing screenshot example" src="example2.jpg" height=450px>
 
 This program was developed for **outreach purposes**.
 
@@ -48,7 +48,7 @@ The program can be controlled with a keyboard using the following keys
 Acknowledgements
 ----------------
 
-The original idea and precomputation of the lens deformation is attributed to Johan Richard (CRAL, CNRS/INSU, Lyon)
+The original idea and precomputation of the lens deformation is attributed to Johan Richard (CRAL, CNRS/INSU)
 
 License
 -------
