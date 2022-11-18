@@ -5,7 +5,7 @@ Face Lensing
 
 ___Look at yourself through a gravitational lens___
 
-<img alt="Face Lensing screenshot example" src="example2.jpg" height=450px>
+<img alt="Face Lensing screenshot example" src="example.jpg" height=450px>
 
 This program was developed for **outreach purposes**.
 
