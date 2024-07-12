@@ -28,6 +28,8 @@ COMMANDS = (
     "q : shutdown app",
     "c : switch camera",
     "+/- : increase/decrease lens effect",
+    "i,j,k,l : move the lens",
+    "r : reset lens position and strength",
     "space : take a screenshot",
 )
 WATERMARK = "Made with Face Lensing - https://github.com/aboucaud/face_lensing"
@@ -36,6 +38,7 @@ SCREENSHOT_TEMPLATE = "face_lensing_screenshot_{}.jpg"
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
 DEFAULT_CAM = 0
 DEFAULT_ZOOM = 0.07
+DEFAULT_SHIFT = (0, 0)
 DEFAULT_OUTPUT_SHAPE = (1920, 1080)  # (1280, 800)
 
 
@@ -125,7 +128,7 @@ class Camera:
 class Morphing:
     """Class handling the morphing effects precomputed in a file"""
 
-    def __init__(self, target_shape, morph_file, zoom, shift=(0, 0)):
+    def __init__(self, target_shape, morph_file, zoom, shift=DEFAULT_SHIFT):
         self.zoom = zoom
         self.shift = np.asarray(shift, dtype=int)
         self.read_morph_file(morph_file)
@@ -161,8 +164,13 @@ class Morphing:
 
         self.displacement_y = np.array(self.coords[0] - img_dply).astype(int)
         self.displacement_x = np.array(self.coords[1] - img_dplx).astype(int)
+
         # Mirror lens effect on the horizontal axis
         self.displacement_x = self.target_shape[1] - self.displacement_x
+
+        # Avoid overflow
+        self.displacement_y = self.displacement_y.clip(0, self.target_shape[0] - 1)
+        self.displacement_x = self.displacement_x.clip(0, self.target_shape[1] - 1)
 
     def apply(self, image):
         return np.asarray(
@@ -184,6 +192,18 @@ class Morphing:
     def decrease_effect(self):
         self.zoom += 0.005
         self.init_morphing()
+
+    def move_effect(self, shift=(0, 0)):
+        new_shift = self.shift + np.asarray(shift, dtype=int)
+        bounds = (self.target_shape / 2).astype(int) - 1
+        self.shift = np.clip(new_shift, -bounds, bounds).astype(int)
+        self.init_morphing()
+
+    def reset(self):
+        self.zoom = DEFAULT_ZOOM
+        self.shift = DEFAULT_SHIFT
+        self.init_morphing()
+
 
 def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM, shape=DEFAULT_OUTPUT_SHAPE):
     print(__doc__)
@@ -213,6 +233,26 @@ def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM, shape=
             if keypress == ord(" "):
                 print("Taking a screenshot")
                 cam.take_screenshot(img_display)
+
+            if keypress == ord("i"):
+                print(f"Moving the lens upwards")
+                morph.move_effect((-10, 0))
+
+            if keypress == ord("k"):
+                print(f"Moving the lens downwards")
+                morph.move_effect((10, 0))
+
+            if keypress == ord("j"):
+                print(f"Moving the lens to the left")
+                morph.move_effect((0, -10))
+
+            if keypress == ord("l"):
+                print(f"Moving the lens to the right")
+                morph.move_effect((0, 10))
+
+            if keypress == ord("r"):
+                print("Resetting lens effect and shift")
+                morph.reset()
 
             if keypress == ord("h"):
                 print("Showing/hiding commands")

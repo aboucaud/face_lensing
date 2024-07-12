@@ -35,15 +35,15 @@ App controls
 
 The program can be controlled with a keyboard using the following keys
 
-|       Key        | Action                                      |
-| :--------------: | ------------------------------------------- |
-|   <kbd>h</kbd>   | show/hide command helper                    |
-|   <kbd>q</kbd>   | quit the program                            |
-|   <kbd>c</kbd>   | change camera (in case of multiple webcams) |
-| <kbd>Space</kbd> | save a screenshot locally                   |
-|   <kbd>+</kbd>   | increase the lensing effect                 |
-|   <kbd>-</kbd>   | decrease the lensing effect                 |
-
+|                          Key                           | Action                                                                                                                  |
+| :----------------------------------------------------: | ----------------------------------------------------------------------------------------------------------------------- |
+|                      <kbd>h</kbd>                      | show/hide command helper                                                                                                |
+|                      <kbd>q</kbd>                      | quit the program                                                                                                        |
+|                      <kbd>c</kbd>                      | change camera (in case of multiple webcams)                                                                             |
+|               <kbd>+</kbd>/<kbd>-</kbd>                | increase/decrease the lensing effect                                                                                    |
+| <kbd>i</kbd>, <kbd>j</kbd>, <kbd>k</kbd>, <kbd>l</kbd> | move the lens respectively in the <kbd>&uarr;</kbd>, <kbd>&larr;</kbd>, <kbd>&darr;</kbd>, <kbd>&rarr;</kbd> directions |
+|                      <kbd>r</kbd>                      | reset the lens position and strength                                                                                    |
+|                    <kbd>Space</kbd>                    | save a screenshot locally                                                                                               |
 
 Acknowledgements
 ----------------
