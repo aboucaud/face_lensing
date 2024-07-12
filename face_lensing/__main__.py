@@ -37,6 +37,7 @@ SCREENSHOT_TEMPLATE = "face_lensing_screenshot_{}.jpg"
 LENS_FILE_PATH = _BASEDIR / "dpl_xy_z1_elliptical.npz"
 DEFAULT_CAM = 0
 DEFAULT_ZOOM = 0.07
+DEFAULT_OUTPUT_SHAPE = (1920, 1080)  # (1280, 800)
 
 
 class Camera:
@@ -44,7 +45,7 @@ class Camera:
 
     def __init__(self, cam_id=0, output_shape=None, output_dir=None):
         self.cam_id = cam_id
-        self.output_shape = output_shape or (1280, 800)
+        self.output_shape = output_shape
         self.output_dir = output_dir or str(Path.cwd().resolve())
         self._init_app()
 
@@ -86,7 +87,8 @@ class Camera:
 
     def show(self, image=None):
         image = image if image is not None else self.read_capture_device()
-        image = cv2.resize(image, self.output_shape)
+        if self.output_shape is not None:
+            image = cv2.resize(image, self.output_shape)
         if self._show_help:
             self.show_commands(image)
             self.add_watermark(image)
@@ -184,10 +186,9 @@ class Morphing:
         self.zoom += 0.005
         self.init_morphing()
 
-
-def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM):
+def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM, shape=DEFAULT_OUTPUT_SHAPE):
     print(__doc__)
-    cam = Camera(cam_id)
+    cam = Camera(cam_id, output_shape=shape)
     morph = Morphing(cam.shape, lens_file, zoom)
     img_display = cam.read_capture_device()
 
