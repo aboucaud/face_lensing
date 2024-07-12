@@ -14,6 +14,7 @@ in science outreach events.
 
 Developed by Alexandre Boucaud (Laboratoire APC, CNRS/IN2P3, Paris)
 """
+
 from pathlib import Path
 
 import cv2
@@ -205,7 +206,12 @@ class Morphing:
         self.init_morphing()
 
 
-def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM, shape=DEFAULT_OUTPUT_SHAPE):
+def main(
+    lens_file=LENS_FILE_PATH,
+    cam_id=DEFAULT_CAM,
+    zoom=DEFAULT_ZOOM,
+    shape=DEFAULT_OUTPUT_SHAPE,
+):
     print(__doc__)
     cam = Camera(cam_id, output_shape=shape)
     morph = Morphing(cam.shape, lens_file, zoom)
@@ -235,19 +241,19 @@ def main(lens_file=LENS_FILE_PATH, cam_id=DEFAULT_CAM, zoom=DEFAULT_ZOOM, shape=
                 cam.take_screenshot(img_display)
 
             if keypress == ord("i"):
-                print(f"Moving the lens upwards")
+                print("Moving the lens upwards")
                 morph.move_effect((-10, 0))
 
             if keypress == ord("k"):
-                print(f"Moving the lens downwards")
+                print("Moving the lens downwards")
                 morph.move_effect((10, 0))
 
             if keypress == ord("j"):
-                print(f"Moving the lens to the left")
+                print("Moving the lens to the left")
                 morph.move_effect((0, -10))
 
             if keypress == ord("l"):
-                print(f"Moving the lens to the right")
+                print("Moving the lens to the right")
                 morph.move_effect((0, 10))
 
             if keypress == ord("r"):
