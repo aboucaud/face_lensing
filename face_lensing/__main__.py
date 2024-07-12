@@ -24,12 +24,11 @@ _BASEDIR = Path(__file__).parent.resolve()
 
 TITLE = "Face Lensing"
 COMMANDS = (
-    "H : show/hide the app controls",
-    "Q : shutdown app",
-    "C : switch camera",
-    "+ : increase lens effect",
-    "- : decrease lens effect",
-    "Space : take a screenshot",
+    "h : show/hide the app controls",
+    "q : shutdown app",
+    "c : switch camera",
+    "+/- : increase/decrease lens effect",
+    "space : take a screenshot",
 )
 WATERMARK = "Made with Face Lensing - https://github.com/aboucaud/face_lensing"
 SCREENSHOT_TEMPLATE = "face_lensing_screenshot_{}.jpg"
