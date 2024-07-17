@@ -1,7 +1,7 @@
 Face Lensing
 ============
 
-[![License][license-badge]](LICENSE) ![Python supported versions][pyversion-badge] [![PyPI][pypi-badge]][pypi]
+[![License][license-badge]](LICENSE) ![Python supported versions][pyversion-badge] [![PyPI][pypi-badge]][pypi] [![PyPI downloads][dl-badge]][dl]
 
 ___Look at yourself through a gravitational lens___
 
@@ -59,3 +59,5 @@ This program is licensed under the [MIT license](LICENSE).
 [pyversion-badge]: https://img.shields.io/pypi/pyversions/face_lensing?color=yellow&logo=pypi
 [pypi-badge]: https://badge.fury.io/py/face_lensing.svg
 [pypi]: https://pypi.org/project/face_lensing/
+[dl-badge]: https://static.pepy.tech/badge/face_lensing
+[dl]: https://pepy.tech/project/face_lensing
